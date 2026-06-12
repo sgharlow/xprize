@@ -58,4 +58,34 @@ All three winners are **voice/agent career tools for individual professionals**:
 
 ---
 
-*Round 3 uses pool v3 (160 all-new ideas; includes a career-adjacent cluster in other categories to test whether the career thesis holds outside Education/Entrepreneurship). Add its winners here when the run is done.*
+## Round 3 — pool v3 (recorded 2026-06-11)
+
+Winners from the third 160-idea pool (preserved in git at commit `ece2b1a`), by simulation win share: **IELTSSpeak 39%**, **NegotiationGym 29%**.
+
+### IELTSSpeak — Education & Human Potential
+
+> IELTS and TOEFL speaking-section coach with examiner-calibrated scoring.
+
+| BV | AI | CI | First dollar | Solo-build | Wedge | Showcase |
+|---|---|---|---|---|---|---|
+| 8 | 9 | 7 | 8 | 9 | 8 | 9 |
+
+Tags: `education`, `voice`, `emergingmarkets`
+
+Contribution to the thesis: **calibrated voice scoring** — users pay per scored attempt against a credible rubric and watch the number move.
+
+### NegotiationGym — Education & Human Potential
+
+> Practice salary and vendor negotiations against an adaptive AI counterpart that fights back.
+
+| BV | AI | CI | First dollar | Solo-build | Wedge | Showcase |
+|---|---|---|---|---|---|---|
+| 7 | 9 | 7 | 8 | 9 | 8 | 9 |
+
+Tags: `education`, `hr`, `voice`
+
+Contribution to the thesis: **adversarial practice** — an AI counterpart that pushes back, plus dollar-quantifiable outcomes ("rehearsed, then got $12k more").
+
+### Verdict after three rounds
+
+Five winners, one shape: **voice-first AI career tools for individual professionals** (JobHuntOS, InterviewGym, AccentSmith, IELTSSpeak, NegotiationGym). The deliberately planted career ideas in *other* categories (SeveranceMax, OfferLetter Counsel) did not win — the signal is specifically **voice coaching + career**, not career paperwork. Decision moved to `CONCEPT.md`: a combined product for job hunters, especially workers displaced by AI.
