@@ -1,64 +1,90 @@
-# Concept: the combined entry (working title: "Rebound")
+# Concept v2: the combined entry (working title: "Rebound")
 
-*Drafted 2026-06-11 from the five bracket winners. Target: Build with Gemini XPRIZE, category **Entrepreneurship & Job Creation**.*
+*Revised 2026-06-11 after a needs-first review and a live read of the official rules and FAQ (xprize.devpost.com). Supersedes v1 (git `6be02e5`).*
+
+**Category: Education & Human Potential** ("Transforming how we learn, grow, and achieve our best") — see Category Decision below. Fallback: Entrepreneurship & Job Creation.
 
 ## One-liner
 
-A voice-first AI career agent for workers displaced by AI: it **works your job search while it trains you to win it** — sourcing and tailoring applications on one side, drilling you for *the specific interviews it books* on the other.
+A voice-first AI career agent for workers displaced by AI — it finds your next role, builds the warm path to it, and trains you out loud to win it.
 
-## Why this is the entry
+## Why this product
 
-Five independent ranking rounds over 480 ideas kept selecting the same anatomy: voice-native coaching + an agent doing real career work + a consumer who pays at a high-stakes moment. The combination beats any single winner because the two halves feed each other (see "the loop"), and the AI-displacement framing turns the hackathon's own premise into the Category Impact story: *AI re-employing the people AI displaced.*
+Three independent ranking rounds over 480 ideas converged on voice-first AI career tools (FINALISTS.md). A needs-first review of the displaced job hunter's journey then reshaped the bundle: the two needs that most determine outcomes — **direction** (is my occupation shrinking? where do my skills transfer?) and **relationships** (warm paths beat cold applications) — now lead the product, and the application machine is demoted to workhorse.
 
-## What each finalist contributes
+## Initial wedge: support professionals displaced by AI
 
-| Finalist | DNA carried into the combo |
-|---|---|
-| **JobHuntOS** | The agent operations core: gap narrative, per-posting resume tailoring, application prep, recruiter follow-ups, pipeline tracking. |
-| **InterviewGym** | The revenue spike: voice mock interviews the night before a real one — highest willingness-to-pay moment in the journey. |
-| **NegotiationGym** | The adversarial counterpart that fights back, deployed at offer stage; produces dollar-quantified wins for testimonials. |
-| **IELTSSpeak** | Examiner-calibrated scoring: every voice session gets a rubric score, so users watch a number move (and pay per scored attempt). |
-| **AccentSmith** | The continuous-use layer: speech clarity and communication drills between high-stakes events; retention between searches. |
+Launch for **customer-support and call-center professionals displaced by AI support bots** — then generalize.
 
-## The loop (the moat, and the AI-Native Ops evidence)
+- Largest, most identifiable AI-displaced cohort of 2025–26; layoffs are public and concentrated.
+- They are voice-skilled by profession — perfect fit for a voice-first product.
+- Their pivot map is well-defined: CX ops, AI-bot supervision and QA, conversation design, implementation/success roles — jobs that *exist because of* the same AI wave.
+- Reachable in communities (support Slacks/Discords, r/sysadmin-adjacent CX forums, LinkedIn layoff cohorts) without predatory outreach.
+- The narrative writes itself: *the people AI bots displaced become the people who run the bots.*
 
-1. **Agent loop** — the agent monitors postings (and public WARN layoff filings), tailors materials, preps applications for one-tap approval, chases recruiters, books interviews.
-2. **Gym loop** — the moment an interview lands on the calendar, the gym generates a voice mock *for that exact job*: real JD, researched company, role-calibrated rubric. Offer arrives → negotiation rehearsal against an adversarial counterpart armed with market comps.
-3. **Closed loop** — gym scores feed agent targeting: if the user scores 8s in ops-manager mocks and 5s in analyst mocks, the agent re-weights where it spends application effort. **An AI making a real operational decision from measured human performance** — the cleanest possible answer to the "AI executes key decisions" judging bar.
+## The product set (in journey order)
 
-## Hard-requirement mapping (Stage One)
+1. **Day-One Triage** (free) — severance/COBRA/unemployment/runway checklist with state-specific guidance. Trust wedge; explicitly informational, not legal or financial advice.
+2. **Pivot Map** (paid report, first dollar) — honest occupation outlook, transferable-skill graph, 3–4 target roles with live demand and salary data, and a gap plan built on evidence projects rather than course-collecting.
+3. **Connection Engine** — consent-based network mapping (LinkedIn export upload, no scraping), warm-path detection into target companies, outreach drafting, and **voice rehearsal of the networking call** plus a pre-call voice briefing.
+4. **Search Agent** — targeted applications with draft + one-tap approve (human always sends), recruiter follow-ups, pipeline tracking. Quality targeting, never spam.
+5. **The Gym** — job-specific voice mock interviews generated from the real JD and company, rubric-calibrated scoring on every session, negotiation sparring at offer stage against a counterpart that pushes back, communication drills between events, and a daily 3-minute voice standup for cadence and morale.
+6. **The closed loop** — gym scores and interview outcomes re-weight where the agent spends effort, *across channels* (warm paths vs. applications) and across role targets; market data re-tunes the Pivot Map. Every reallocation is written to a **visible decision log** ("why I shifted your effort this week").
+7. **Landing Pack** (expansion) — offer review, negotiation rehearsal, first-90-days ramp coaching.
 
-- **Gemini API**: Gemini Live for real-time voice mocks/negotiation; Gemini for JD analysis, resume tailoring, rubric scoring.
-- **Google Cloud**: Cloud Run (agent pipeline), Firestore (pipeline + scores), Cloud Tasks/Scheduler (follow-ups, posting monitors).
-- **Operates with AI agents**: the agent runs sourcing, tailoring, scheduling, coaching, scoring, and targeting reallocation.
-- **Newly created business, real users, real revenue**: see revenue engines below.
+## The business itself runs on agents
 
-## Two revenue engines (Business Viability)
+The rules judge whether teams "run their business through AI… live in production and executes key decisions" — the *business*, not just the product. Rebound's own operations are agent-run and logged from day one:
 
-1. **Consumer (day-1 revenue)**: free voice assessment → interview prep pack ($29–49, sellable from week 2 of the build), active-search subscription ($39–79/mo), negotiation rehearsal at offer ($99 or success-based). Price umbrella: human career coaches charge $150–300/hr.
-2. **Outplacement flip (bulk revenue)**: employers running layoffs buy outplacement at $1,500–3,000/head today for a portal and a few calls. An AI outplacement seat at $300–500/head undercuts 5–10× and delivers more; one mid-size layoff contract = hundreds of real users and real revenue in a single sale. WARN filings are public — the agent can find its own B2B pipeline.
+- **Support agent** answers users (voice and chat) with escalation to Steve.
+- **Onboarding agent** runs activation sequences and win-back.
+- **Content agent** produces the SEO/community answer-content pipeline (reviewed before publish).
+- **Ops dashboard** records every agent decision — which doubles as the **production evidence the submission requires** (agent logs, API records, screenshots).
 
-## Distribution wedge
+## Hard-requirement mapping (verified against rules)
 
-Layoff cohorts are public, concentrated, and self-organizing: WARN notices, r/layoffs, LinkedIn #opentowork waves, alumni Slack groups of affected companies. The displaced-by-AI framing earns press and community sharing that generic job tools can't.
+- **Gemini API in deployed app**: Gemini Live (native audio) for mocks, negotiation sparring, standups; Gemini for JD analysis, pivot mapping, rubric scoring, outreach drafting.
+- **≥1 Google Cloud product**: Cloud Run (app + agents), Firestore (pipeline, scores, decision log), Cloud Tasks/Scheduler (follow-ups, monitors). Free credits available per rules.
+- **Newly created after May 19, 2026**: clean — work starts June 2026. Pre-existing personal tooling may be reused if disclosed (rules permit with explanation).
+- **Solo entrant**: explicitly allowed.
 
-## Flanking features from the pools (fold in, don't build first)
+## Revenue plan (judged on arms-length, third-party revenue with monthly breakdown)
 
-- **JobLossRunway** (v3): week-one triage — severance/COBRA/unemployment checklist — as free onboarding that builds trust.
-- **CareerSwitch Map / SkillProof** (v1): reskill-toward-AI-adjacent-roles plan + work-history-to-narrative, for users whose old role isn't coming back.
-- **OfferLetter Counsel / SeveranceMax** (v3): document-review premium add-ons at the bookends (severance in, offer out).
-- **ManagerSchool First90 / SalesRampAI** (v3): post-placement ramp coaching — expansion revenue after the win.
-- **ESLWorkTalk** (v1): non-native-speaker drills; widens the wedge internationally.
+- **Design for a growth curve, not a spike**: rules require revenue broken down by month (May–Aug). Subscriptions beat one-off packs for the sustainability assessment — lead with a **founding-member subscription** ($39–59/mo) plus the **Pivot Map as a $49–79 one-time entry purchase**.
+- **Flat pricing only — no success fees.** Fee-for-placement structures can trigger state employment-agency licensing; Rebound is software + coaching, never a placement agency.
+- **Arms-length discipline**: related-party revenue must be disclosed separately and judges discount it — no friends-and-family padding; every customer through the public funnel.
+- **Outplacement B2B**: a real opportunity (incumbents charge $1,500–3,000/head and are weakest at direction + networking) but enterprise cycles won't close by Aug 17. Goal: **one signed pilot or LOI** as trajectory evidence; consumer revenue carries the submission.
+- **Scholarship seats** funded from margin for unemployment-only users — pricing empathy that doubles as Category Impact evidence.
 
-## Risks and mitigations
+## Compliance & trust by design
 
-1. **Auto-apply is TOS-gray** on LinkedIn/Indeed and reads as spam to employers. Mitigation: the agent *prepares*, the human one-tap *approves and sends*; prioritize direct ATS portals and email. Targeting quality over volume is also the better story for judges.
-2. **Crowded space** (auto-apply tools, AI interview prep exist). Differentiation: voice-first end-to-end, the closed pipeline↔practice loop, the displaced-worker wedge, and instrumented outcomes (interview-pass-rate lift, negotiated-dollar delta, placements).
-3. **Solo scope creep**: MVP is three things only — pipeline agent (draft + approve), job-specific voice mock, offer-stage negotiation rehearsal. Everything else is a drill inside the gym or a later flank.
+- Candidate-side only: rubric scores are private coaching feedback, never shared with employers — keeps Rebound clearly outside employer-side automated-employment-decision rules (e.g., NYC LL144) and away from hiring-bias liability.
+- Consent-first data: user-uploaded exports only; no scraping; voice recordings deletable, never used for training; clear retention policy.
+- Severance/benefits guidance is informational with attorney/advisor referral points.
+- Accent and dialect fairness: scoring rubrics target content and structure, with delivery feedback framed as coaching choices, not penalties.
 
-## 90-day shape (submission window closes Aug 17, 2026)
+## 9.5-week build plan (June 11 → submit Aug 14, deadline Aug 17 1:00 pm PT)
 
-- **Weeks 1–3**: voice mock interview + scored assessment funnel; start charging prep packs.
-- **Weeks 3–6**: pipeline agent (monitor, tailor, draft, approve-to-send); subscription on.
-- **Weeks 6–10**: negotiation module; first outplacement pilot outreach off WARN lists; instrument every outcome.
-- **Weeks 10–13**: scale what's converting; cut what isn't; build the submission demo around a live voice session plus the agent working a real pipeline.
+- **Wk 1–2 (Jun 11–24)**: De-risk Gemini Live voice quality first (fallback: turn-based push-to-talk). Ship Pivot Map report + Stripe + landing page; founding-member pricing live. First arms-length dollars in June.
+- **Wk 3–4 (Jun 25–Jul 8)**: Gym v1 — job-specific voice mock with rubric scoring; daily standup; free Triage funnel; analytics instrumented (activation, conversion, outcomes).
+- **Wk 5–6 (Jul 9–22)**: Connection Engine v0 (export upload → warm paths → outreach drafts → call rehearsal); Search Agent draft+approve.
+- **Wk 7–8 (Jul 23–Aug 5)**: Closed-loop channel allocation + visible decision log; company-ops agents live and logging; outplacement pilot conversations off community partnerships (not cold WARN outreach).
+- **Wk 9 (Aug 6–14)**: Metrics hardening, testimonials, <3-minute video, Devpost writeup with revenue/user/production evidence, **submit Aug 14** (3-day buffer).
+
+## Metrics that go in the submission
+
+- Activation: completed Pivot Maps. Conversion: paid users, MRR by month (Jun/Jul/Aug curve). Outcomes: interviews booked per active user, mock-score improvement, offers, negotiated-dollar delta, placements. Testimonials collected continuously from week 2.
+
+## Video storyboard (<3 min, per rules)
+
+1. The wedge story: a support pro displaced by a bot (15s) → 2. Pivot Map reveal from a real resume (25s) → 3. Live voice mock for a real posting, scored (45s) → 4. Decision log: the agent reallocating effort to warm paths (20s) → 5. Revenue + outcomes dashboard (20s) → 6. User testimonial: "the bot took my job; this agent got me a better one" (20s) → 7. Architecture beat: Gemini Live + Cloud Run (10s).
+
+## Category decision
+
+The official category copy reads: *Education & Human Potential — "Transforming how we learn, grow, and achieve our best"* vs. *Entrepreneurship & Job Creation — "Fueling the tools that help new founders and economies thrive."* Rebound is a person-development product (coaching, practice, growth into a new role), which maps cleanly to **Education & Human Potential**; the E&JC copy centers *founders*. Stage One is pass/fail on category fit, so the cleaner read wins despite Education likely being the more crowded category. If the contract/fractional bridge-income lane becomes prominent, E&JC becomes defensible — revisit at submission time.
+
+## Open items
+
+- Name/trademark/domain check ("Rebound" is a working title; conflicts likely).
+- Gemini Live voice latency test is the week-1 go/no-go gate.
+- Pick the first three community partnerships for the support-pro wedge.
