@@ -1,6 +1,6 @@
-# Concept v2: the combined entry — **NextRound**
+# Concept v2: the combined entry — **Comeback**
 
-> **Decisions locked 2026-06-11** (Steve): name **NextRound** (was "Rebound"; domain/trademark check pending), category **Education & Human Potential**, wedge **support professionals displaced by AI**. Build repo: `../nextround`. Week-1 go/no-go **passed**: Gemini Live (`gemini-3.1-flash-live-preview`) median time-to-first-audio 727ms — full-duplex voice UX viable.
+> **Decisions locked 2026-06-11** (Steve): name **Comeback** (NextRound was burned — multiple shipping AI interview-prep products use it; Comeback scanned clean and comeback.careers is available, register it), category **Education & Human Potential**, wedge **support professionals displaced by AI**. Build repo: `../comeback` (github.com/sgharlow/comeback, private). Week-1 go/no-go **passed**: Gemini Live (`gemini-3.1-flash-live-preview`) median time-to-first-audio 727ms — full-duplex voice UX viable.
 
 *Revised 2026-06-11 after a needs-first review and a live read of the official rules and FAQ (xprize.devpost.com). Supersedes v1 (git `6be02e5`).*
 
