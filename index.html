@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build with Gemini XPRIZE — Focus-Area Picker & Sweet 16 Bracket</title>
+<style>
+  :root{
+    --bg:#0b1020; --panel:#121a30; --panel2:#0f1730; --line:#26314f;
+    --ink:#eaf0ff; --muted:#9aa7c7; --accent:#4f8cff; --accent2:#22d3aa;
+    --gold:#ffd24a; --win:#1f9d6b; --chip:#1b2542; --fit:#ff8a4c;
+    --bv:#4f8cff; --ai:#a974ff; --ci:#22d3aa; --lens:#7dd3fc;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45}
+  a{color:var(--accent)}
+  header.top{padding:22px 26px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#0e1730,#0b1020)}
+  header.top h1{margin:0 0 4px;font-size:22px;letter-spacing:.2px}
+  header.top .sub{color:var(--muted);font-size:13px}
+  .facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .fact{background:var(--chip);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--muted)}
+  .fact b{color:var(--ink)}
+  .wrap{padding:18px 26px;max-width:1500px;margin:0 auto}
+
+  .banner{background:linear-gradient(90deg,rgba(79,140,255,.14),rgba(34,211,170,.10));border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:12.5px;color:var(--muted);margin-bottom:16px}
+  .banner b{color:var(--ink)}
+
+  .controls{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+  .ctl-col{flex:1;min-width:300px}
+  .ctl-col h3{margin:0 0 8px;font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+  .ctl-col input[type=text]{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:8px 10px;font-size:13px;margin-bottom:8px}
+  .slider-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;font-size:13px}
+  .slider-row label{width:155px;color:var(--muted)}
+  .slider-row .val{width:32px;text-align:right;font-variant-numeric:tabular-nums}
+  input[type=range]{flex:1}
+  .btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:13px;cursor:pointer;font-weight:600}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+  .btn.gold{background:var(--gold);color:#1a1300}
+  .btn.teal{background:var(--accent2);color:#03281f}
+  .btn:hover{filter:brightness(1.08)}
+  .note{font-size:12px;color:var(--muted);margin-top:6px}
+  .checkrow{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted);margin-top:8px}
+
+  /* edge chips */
+  .edgewrap{margin-top:4px}
+  .edge-group-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:8px 0 5px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{font-size:12px;padding:5px 10px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);color:var(--muted);cursor:pointer;user-select:none}
+  .chip:hover{border-color:var(--fit)}
+  .chip.on{background:rgba(255,138,76,.18);border-color:var(--fit);color:#ffd9c2}
+
+  .tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+  .tab{padding:9px 14px;border-radius:999px;background:var(--chip);border:1px solid var(--line);color:var(--muted);cursor:pointer;font-size:13px;font-weight:600}
+  .tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .tab.overview.active{background:var(--gold);color:#1a1300}
+
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:12px;align-items:center}
+  .legend span b{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:middle}
+  #pulse{font-size:11px;color:var(--accent2);opacity:0;transition:opacity .15s}
+  #pulse.show{opacity:1}
+
+  .bench{font-size:12px;color:var(--muted);background:var(--panel);border:1px dashed var(--line);border-radius:10px;padding:8px 12px;margin:0 0 6px}
+  .bench b{color:var(--ink)}
+
+  .bracket{display:flex;gap:26px;overflow-x:auto;padding:10px 4px 20px}
+  .round{display:flex;flex-direction:column;justify-content:space-around;min-width:236px}
+  .round h4{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin:0 0 8px;text-align:center}
+  .match{display:flex;flex-direction:column;gap:6px;margin:10px 0}
+  .seed{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:8px 10px;cursor:pointer;transition:.12s;position:relative}
+  .seed:hover{border-color:var(--accent)}
+  .seed.win{border-color:var(--win);background:linear-gradient(90deg,rgba(31,157,107,.18),var(--panel))}
+  .seed.fitmatch{box-shadow:inset 3px 0 0 var(--fit)}
+  .seed .sd{font-size:11px;color:var(--muted);width:20px;text-align:center;font-variant-numeric:tabular-nums}
+  .seed .nm{flex:1;font-size:13px;font-weight:600;line-height:1.2}
+  .seed .nm small{display:block;font-weight:400;color:var(--muted);font-size:11px;margin-top:2px}
+  .seed .tot{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--accent2);text-align:right}
+  .seed .tot small{display:block;font-size:9px;color:var(--fit);font-weight:700}
+  .seed.bye{opacity:.5}
+  .seed .mini{display:flex;gap:3px;align-items:center;margin-left:2px}
+  .dot{font-size:10px;font-variant-numeric:tabular-nums}
+
+  .champbox{display:flex;flex-direction:column;justify-content:center;align-items:center;min-width:236px}
+  .champbox .crown{font-size:12px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+  .champ-card{background:linear-gradient(160deg,#2a2410,#121a30);border:1px solid var(--gold);border-radius:14px;padding:16px;text-align:center;width:100%}
+  .champ-card .nm{font-size:16px;font-weight:800}
+  .champ-card .pitch{font-size:12px;color:var(--muted);margin-top:6px}
+  .champ-card .tot{font-size:26px;font-weight:800;color:var(--gold);margin-top:10px}
+
+  .lead{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .lead th,.lead td{padding:11px 14px;text-align:left;font-size:13px;border-bottom:1px solid var(--line)}
+  .lead th{color:var(--muted);text-transform:uppercase;font-size:11px;letter-spacing:.6px}
+  .lead tr:last-child td{border-bottom:none}
+  .lead .rk{font-weight:800;color:var(--gold);font-size:16px}
+  .lead .cat{color:var(--muted);font-size:12px}
+  .lead .scorecell{font-weight:700;color:var(--accent2);font-variant-numeric:tabular-nums}
+  .pill{display:inline-block;font-size:10px;padding:2px 7px;border-radius:999px;background:var(--chip);border:1px solid var(--line);color:var(--muted);margin-left:6px}
+
+  .vpanel{background:var(--panel);border:1px solid var(--accent2);border-radius:12px;padding:16px;margin-bottom:18px}
+  .vpanel h3{margin:0 0 8px;font-size:15px}
+  .vpanel .vbig{font-size:14px;background:rgba(34,211,170,.10);border:1px solid rgba(34,211,170,.35);border-radius:10px;padding:10px 14px;margin:10px 0}
+  .vpanel .vbig b{color:var(--accent2)}
+  .vpanel .vnote{font-size:12px;color:var(--muted);margin:8px 0 0}
+  .vpanel .vstale{font-size:12px;color:var(--gold);margin:0 0 8px}
+  .drawlog{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-top:18px}
+  .drawlog h3{margin:0 0 8px;font-size:14px}
+  .drawlog li{font-size:12.5px;color:var(--muted);margin:3px 0}
+  .drawlog li b{color:var(--ink)}
+
+  .overlay{position:fixed;inset:0;background:rgba(3,7,18,.72);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+  .overlay.show{display:flex}
+  .modal{background:var(--panel);border:1px solid var(--line);border-radius:14px;width:560px;max-width:100%;padding:20px}
+  .modal h3{margin:0 0 4px}
+  .modal label{display:block;font-size:12px;color:var(--muted);margin:12px 0 4px}
+  .modal input[type=text],.modal textarea{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:8px 10px;font-size:13px}
+  .modal textarea{resize:vertical;min-height:54px}
+  .scoreedit{display:flex;gap:12px;margin-top:6px;flex-wrap:wrap}
+  .scoreedit .se{flex:1;min-width:110px}
+  .scoreedit input[type=range]{width:100%}
+  .modal .tagline{font-size:11px;color:var(--muted);margin-top:10px}
+  .modal .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+  .crit{display:flex;gap:16px;margin:14px 0;flex-wrap:wrap}
+  .crit .c{flex:1;min-width:200px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}
+  .crit .c b{font-size:13px}
+  .crit .c p{font-size:12px;color:var(--muted);margin:6px 0 0}
+  details.rubric{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:16px}
+  details.rubric summary{cursor:pointer;font-weight:600;font-size:13px}
+  details.rubric p,details.rubric li{font-size:12.5px;color:var(--muted)}
+  .footlinks{font-size:12px;color:var(--muted);margin-top:24px;border-top:1px solid var(--line);padding-top:14px}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>🏆 Build with Gemini XPRIZE — Focus-Area Picker & Sweet 16 Bracket</h1>
+  <div class="sub">A 160-idea pool (32 per category). Every 🎲 draw fields a random 16 per category into an NCAA-style bracket; the five champions meet on the overall leaderboard. Re-draw and simulate until one focus area keeps winning.</div>
+  <div class="facts">
+    <div class="fact"><b>$2,000,000</b> in prizes</div>
+    <div class="fact">Submit by <b>Aug 17, 2026</b></div>
+    <div class="fact">Judging <b>Aug 18 – Sep 15</b></div>
+    <div class="fact">Winners <b>~Sep 25, 2026</b></div>
+    <div class="fact">Must <b>operate with AI agents</b></div>
+    <div class="fact">Must use <b>≥1 Google Cloud product</b> + Gemini API for ≥1 LLM call</div>
+    <div class="fact">3 criteria, <b>equally weighted</b></div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="banner">
+    <b>Everything below re-ranks live.</b> Move a <b>weight</b> slider or toggle a <b>founder-edge</b> chip and all five brackets re-seed and re-run instantly. Hit <b>🎲 New draw</b> for a fresh random 16-of-32 per category, and <b>▶ Simulate</b> to run 1,000 draws at once — the verdict tells you which focus area keeps winning no matter which ideas get drawn.
+  </div>
+
+  <div class="controls">
+    <div class="ctl-col">
+      <h3>Scoring weights <span class="pill">official: equal</span></h3>
+      <div class="slider-row"><label>Business Viability</label><input type="range" id="wBV" min="0" max="3" step="0.1" value="1"><span class="val" id="vBV">1.0</span></div>
+      <div class="slider-row"><label>AI-Native Operations</label><input type="range" id="wAI" min="0" max="3" step="0.1" value="1"><span class="val" id="vAI">1.0</span></div>
+      <div class="slider-row"><label>Category Impact</label><input type="range" id="wCI" min="0" max="3" step="0.1" value="1"><span class="val" id="vCI">1.0</span></div>
+      <div class="slider-row"><label style="color:var(--fit)">Founder-Fit bonus</label><input type="range" id="wFIT" min="0" max="3" step="0.5" value="1.5"><span class="val" id="vFIT">1.5</span></div>
+      <div class="edge-group-label" style="color:var(--lens)">Strategy lenses — yours, not the judges' (default off)</div>
+      <div class="slider-row"><label style="color:var(--lens)">Time to first dollar</label><input type="range" id="wTT" min="0" max="3" step="0.1" value="0"><span class="val" id="vTT">0.0</span></div>
+      <div class="slider-row"><label style="color:var(--lens)">Solo-buildable in 90d</label><input type="range" id="wSO" min="0" max="3" step="0.1" value="0"><span class="val" id="vSO">0.0</span></div>
+      <div class="slider-row"><label style="color:var(--lens)">Distribution wedge</label><input type="range" id="wWE" min="0" max="3" step="0.1" value="0"><span class="val" id="vWE">0.0</span></div>
+      <div class="slider-row"><label style="color:var(--lens)">Demo / showcase value</label><input type="range" id="wSH" min="0" max="3" step="0.1" value="0"><span class="val" id="vSH">0.0</span></div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn ghost" id="resetW">Reset weights</button>
+        <button class="btn ghost" id="resetAll">Reset all ideas</button>
+      </div>
+      <div class="note">Judges score the first three equally. The lenses are pre-scored 1–10 per idea: how fast it can earn its first real dollar, whether one builder can ship and run it inside the window, how reachable the first paying users are, and how vividly it demos agentic AI. Set everything but the first three to 0 for the neutral judge-only view.</div>
+    </div>
+    <div class="ctl-col">
+      <h3>Your edges <span class="pill" id="edgeCount">0 selected</span></h3>
+      <input type="text" id="ghInput" placeholder="GitHub repo / profile URL (optional shortcut)" value="https://github.com/sgharlow/">
+      <input type="text" id="liInput" placeholder="LinkedIn profile URL (optional shortcut)" value="https://www.linkedin.com/in/stevengharlow/">
+      <div class="edgewrap">
+        <div class="edge-group-label">Domains you know</div>
+        <div class="chips" id="domainChips"></div>
+        <div class="edge-group-label">Capabilities you can build</div>
+        <div class="chips" id="capChips"></div>
+      </div>
+      <div class="note"><b style="color:var(--fit)">Pre-set from github.com/sgharlow:</b> doc-automation, matching, education, startups. LinkedIn couldn't be read (login wall) — add your industry edges (e.g. fintech, healthcare, smb) by toggling them so Business Viability / Impact reflect your network. Orange bar = idea matches one of your edges.</div>
+    </div>
+    <div class="ctl-col">
+      <h3>Focus-area tools <span class="pill" id="drawInfo">draw #0</span></h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn gold" id="drawBtn">🎲 New draw</button>
+        <button class="btn teal" id="simBtn">▶ Simulate 1,000 draws</button>
+      </div>
+      <div class="checkrow"><input type="checkbox" id="simJitter" checked><label for="simJitter">±1 score jitter in simulation (tests robustness to scoring error)</label></div>
+      <div class="note"><b>🎲 New draw</b> deals a fresh random 16 of the 32 ideas in each category and re-runs every bracket under your current weights and edges — your edits to ideas persist across draws. <b>▶ Simulate</b> plays 1,000 random draws instantly and reports which <i>category</i> and which <i>idea</i> win most often. That's the focus-area answer: pick the category that keeps winning regardless of which ideas happen to get drawn.</div>
+    </div>
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+
+  <div class="legend">
+    <span><b style="background:var(--bv)"></b>Business Viability</span>
+    <span><b style="background:var(--ai)"></b>AI-Native Operations</span>
+    <span><b style="background:var(--ci)"></b>Category Impact</span>
+    <span><b style="background:var(--fit)"></b>Founder-fit match</span>
+    <span style="color:var(--muted)">· Click any idea to edit name, pitch, or scores.</span>
+    <span id="pulse">↻ re-ranked</span>
+  </div>
+
+  <details class="rubric">
+    <summary>Scoring rubric & how the bracket works</summary>
+    <p>Each idea is scored <b>1–10</b> on the three official, equally-weighted Stage-Two criteria. The weighted total (default 1·1·1, max 30) — plus any <b>Founder-Fit</b> bonus and <b>strategy-lens</b> points you've switched on — sets the <b>seed</b> (1 = strongest). Standard 16-team seeding pairs 1v16, 8v9, 5v12, 4v13, 3v14, 6v11, 7v10, 2v15, so the top two seeds can only meet in the final. In each matchup the higher total advances; <b>ties break by Business Viability, then AI-Native Operations, then Category Impact</b> — mirroring the official tie-break order. Every idea clears <b>Stage One</b> (fits a category, uses Google Cloud + Gemini, AI-native, newly built). Each <b>🎲 draw</b> fields a random 16 of the 32 ideas per category, so re-drawing surfaces different matchups; the <b>simulator</b> aggregates over many draws so the verdict doesn't depend on the luck of one deal.</p>
+    <div class="crit">
+      <div class="c"><b style="color:var(--bv)">Business Viability</b><p>Real business, real users, real revenue in the 90-day window + sustainability of the model. Favors clear willingness-to-pay, fast time-to-first-dollar, low CAC.</p></div>
+      <div class="c"><b style="color:var(--ai)">AI-Native Operations</b><p>Extent to which AI is live in production and executes key decisions — not a feature, but the operator. Favors agentic workflows doing the actual work.</p></div>
+      <div class="c"><b style="color:var(--ci)">Category Impact</b><p>Meaningfully moves the needle: either redefines how something works, or reaches a scale where widespread adoption is credible.</p></div>
+    </div>
+  </details>
+
+  <div id="view"></div>
+
+  <div class="footlinks">
+    Sources &amp; key links:
+    <a href="https://xprize.devpost.com/" target="_blank">Hackathon overview</a> ·
+    <a href="https://xprize.devpost.com/rules" target="_blank">Official rules</a> ·
+    <a href="https://xprize.devpost.com/details/faq" target="_blank">FAQ</a> ·
+    <a href="https://cloud.google.com/free" target="_blank">Google Cloud free tier</a> ·
+    <a href="https://antigravity.google/" target="_blank">Antigravity</a>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h3 id="mTitle">Edit idea</h3>
+    <label>Name</label>
+    <input type="text" id="mName">
+    <label>One-line pitch</label>
+    <textarea id="mPitch"></textarea>
+    <div class="scoreedit">
+      <div class="se"><label>Business Viability <span id="mBVv"></span></label><input type="range" id="mBV" min="1" max="10" step="1"></div>
+      <div class="se"><label>AI-Native Ops <span id="mAIv"></span></label><input type="range" id="mAI" min="1" max="10" step="1"></div>
+      <div class="se"><label>Category Impact <span id="mCIv"></span></label><input type="range" id="mCI" min="1" max="10" step="1"></div>
+    </div>
+    <div class="scoreedit">
+      <div class="se"><label>First dollar <span id="mTTv"></span></label><input type="range" id="mTT" min="1" max="10" step="1"></div>
+      <div class="se"><label>Solo-build <span id="mSOv"></span></label><input type="range" id="mSO" min="1" max="10" step="1"></div>
+      <div class="se"><label>Wedge <span id="mWEv"></span></label><input type="range" id="mWE" min="1" max="10" step="1"></div>
+      <div class="se"><label>Showcase <span id="mSHv"></span></label><input type="range" id="mSH" min="1" max="10" step="1"></div>
+    </div>
+    <div class="tagline">Tags: <span id="mTags"></span></div>
+    <div class="actions">
+      <button class="btn ghost" id="mCancel">Cancel</button>
+      <button class="btn" id="mSave">Save & re-run</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- DATA: [name, pitch, BV, AI, CI, TTFD, Solo, Wedge, Show, [tags]] ----------
+   BV/AI/CI = the official judging criteria. The four strategy lenses (1-10):
+   TTFD  = time to first real dollar inside the 90-day window
+   Solo  = one builder can ship AND operate it (regulation/partnerships lower it)
+   Wedge = how reachable the first paying users are without an audience
+   Show  = how vividly it demos agentic AI to judges                          */
+const SEED_DATA = {
+  "Education & Human Potential": [
+    ["NCLEX Pass Agent","Agentic nursing-licensure prep: adaptive study plans, drills weak areas, books exam dates.",9,8,8,8,8,8,7,["education","healthcare"]],
+    ["TradeCert Coach","AI tutor for HVAC/electrical/plumbing licensure exams with voice practice + scheduling.",9,8,7,8,8,7,8,["education","trades","voice"]],
+    ["IEP Copilot","Auto-drafts special-ed Individualized Education Plans from teacher notes, compliance-checked.",8,8,9,5,7,5,6,["education","doc-automation","compliance"]],
+    ["AI Micro-Bootcamp","4-week AI-skills cohort with auto-graded projects, an AI mentor, and a job-ready portfolio.",8,9,8,7,7,7,7,["education","hr"]],
+    ["DocsToCourse","Turns a company's internal docs into a custom upskilling course with assessments.",9,9,7,6,8,6,6,["education","doc-automation"]],
+    ["ReadRight","Early-literacy coach: child reads aloud, agent gives phonics feedback to parents.",7,8,8,8,8,8,8,["education","voice"]],
+    ["FluentLoop","Voice-agent language fluency coach with spaced repetition and real conversation.",8,9,7,8,8,8,9,["education","voice"]],
+    ["CE AutoPilot","Continuing-education credit manager for licensed pros (real estate, nursing, CPA).",8,7,7,7,8,7,5,["education","compliance"]],
+    ["EssayForge","Agentic college-app + essay manager: deadlines, drafts, school research.",8,7,6,8,8,8,6,["education","doc-automation"]],
+    ["LabGrader","Auto-grades university STEM lab reports with rubric + feedback, sold to departments.",7,8,6,4,7,4,6,["education"]],
+    ["WhatsLearn","Microlearning over WhatsApp for emerging markets, pay-as-you-go.",7,8,8,6,7,7,7,["education","emergingmarkets"]],
+    ["DebateCoach AI","Critical-thinking and debate practice for high schoolers, tournament prep.",6,8,6,7,8,7,8,["education","voice"]],
+    ["AccessLearn","Converts any content into dyslexia/ADHD/low-vision friendly formats on the fly.",7,8,7,6,8,6,7,["education"]],
+    ["GrantTutor","Teaches and co-writes grants for community colleges and nonprofits.",7,7,6,7,8,6,6,["education","nonprofit","doc-automation"]],
+    ["HomeschoolHQ","AI curriculum designer and planner for homeschool co-ops.",6,7,6,7,8,7,6,["education"]],
+    ["PracticeRoom","AI music-practice coach giving real-time instrument feedback.",6,7,5,7,7,7,8,["education","voice"]],
+    ["InterviewGym","Voice-agent mock interviews with rubric-graded feedback, sold as prep packs to job seekers.",8,9,7,9,9,8,9,["education","hr","voice"]],
+    ["ScholarshipSniper","Agent finds matching scholarships and drafts every application for students, success-tracked.",8,8,8,8,8,8,7,["education","matching","doc-automation"]],
+    ["ESLWorkTalk","Job-specific workplace-English voice coach for nurses, builders, and hospitality workers.",8,9,9,8,8,7,9,["education","voice","emergingmarkets","trades"]],
+    ["FAFSA Navigator","Walks families through FAFSA, verification, and aid-offer appeals end to end.",7,7,9,7,8,8,7,["education","benefits","doc-automation"]],
+    ["TeacherTime","Lesson planning, differentiation, and parent comms agent sold directly to teachers.",7,8,8,8,8,8,7,["education","doc-automation"]],
+    ["CareerSwitch Map","Builds a 90-day reskilling plan into AI-adjacent roles with portfolio projects and mock interviews.",7,8,8,7,8,7,7,["education","hr","matching"]],
+    ["OralExamPrep","Voice-agent simulation of med/law oral exams and OSCEs with examiner-style probing.",7,9,7,7,8,6,9,["education","healthcare","voice"]],
+    ["SyllabusToStudy","Upload a syllabus; agent builds the semester study system with spaced repetition and deadlines.",7,7,7,8,9,8,6,["education","doc-automation"]],
+    ["CitizenPrep","Multilingual voice coach for the US citizenship civics and interview test.",7,8,8,8,9,7,8,["education","voice"]],
+    ["DriveTheory","Driving-licence theory-test coach localized for big international markets.",7,7,7,9,9,8,7,["education","emergingmarkets"]],
+    ["StoryTongue","Heritage-language learning for kids via personalized AI bedtime stories with voice.",6,8,7,8,9,8,8,["education","voice","creator"]],
+    ["ThesisCoach","Accountability and methods-feedback agent for grad students writing theses.",7,7,6,8,9,7,6,["education","doc-automation"]],
+    ["HomeworkLens","Photo the homework; agent coaches the parent on how to teach it, no answer-giving.",6,7,7,8,9,8,7,["education"]],
+    ["SkillProof","Turns work history into a verified skill portfolio and interview narrative for non-degree workers.",6,7,8,7,8,7,6,["education","hr"]],
+    ["ApprenticeMatch","Matches young adults to paid apprenticeships and automates the applications.",6,7,8,6,7,6,6,["education","trades","matching","hr"]],
+    ["CourseDoctor","Audits creators' online courses and fixes the completion-rate drop-offs.",7,7,6,7,8,6,6,["education","creator","marketing"]]
+  ],
+  "Entrepreneurship & Job Creation": [
+    ["FounderOS","Agentic co-founder that incorporates, files, builds the landing page, and runs first ad campaigns.",9,9,8,7,7,8,9,["startups","marketing","doc-automation"]],
+    ["HireLoop","AI recruiter-in-a-box for startups: sources, screens, schedules, and runs candidate comms.",9,9,7,7,8,6,8,["hr","outbound","matching"]],
+    ["GigForge","Spins up a fully-operating freelance service business where the agent does the work.",8,9,8,7,7,7,8,["startups"]],
+    ["LocalLaunch","Turns a skill into a bookable local service business: site, payments, scheduling, marketing agent.",9,8,8,7,7,7,8,["smb","payments","marketing"]],
+    ["ExportAgent","Helps SMB manufacturers in emerging markets find and close international buyers.",8,8,9,5,6,5,7,["emergingmarkets","matching"]],
+    ["TalentBridge","Matches displaced workers to reskilling + AI-augmented jobs, employer-paid.",8,8,9,4,6,5,6,["hr","matching"]],
+    ["ColdOutbound AI","Autonomous B2B outbound: research, write, send, and book meetings.",9,9,6,8,8,7,8,["outbound"]],
+    ["PitchProof","Validates a startup idea with real market tests and builds the investor data room.",8,8,7,7,8,7,7,["startups"]],
+    ["SupplierScout","Sourcing agent that finds, vets, and negotiates with suppliers for product founders.",8,8,7,6,7,6,7,["matching"]],
+    ["CreatorBiz","Turns creators into businesses: products, storefront, fulfillment agent.",8,8,7,7,7,8,7,["creator","marketing"]],
+    ["IncubatorInABox","Runs a cohort accelerator program operated by AI mentors.",7,8,7,5,7,6,7,["startups"]],
+    ["GrantsForGrowth","Finds and applies to SMB grants/credits automatically (R&D, hiring).",8,7,7,7,8,6,7,["smb","doc-automation"]],
+    ["BizPlan Live","Generates and continuously updates a living business plan tied to real metrics.",7,8,6,8,9,7,6,["startups","forecasting"]],
+    ["EquityClear","Cap-table and fundraising paperwork agent for first-time founders.",7,7,6,6,6,7,6,["startups","fintech","doc-automation"]],
+    ["FranchiseFinder","Matches aspiring owners to franchises and automates application/financing.",7,7,6,6,7,6,6,["matching"]],
+    ["CoopBuilder","Helps worker co-ops form and operate with a shared AI back office.",6,7,7,4,6,5,6,["nonprofit","smb"]],
+    ["JobHuntOS","Autonomous job-search agent: tailors resumes, applies, tracks, and preps every interview.",8,9,8,9,9,9,8,["hr","matching","doc-automation","outbound"]],
+    ["TeamOfOne","An agent staff — sales, support, ops personas — for solopreneurs on one subscription.",8,9,8,8,8,8,9,["startups","smb","outbound","marketing"]],
+    ["GovBidder","Finds small government RFPs and drafts compliant responses for tiny firms.",8,8,8,7,8,6,7,["smb","doc-automation","compliance","outbound"]],
+    ["LandingLab","Spins up five positioning + landing-page variants with live ad tests to validate demand.",8,8,6,9,9,8,8,["startups","marketing"]],
+    ["NicheRadar","Daily agent-mined market-gap reports from forums and reviews, sold as validated niche briefs.",7,8,6,9,9,8,7,["startups","forecasting","marketing"]],
+    ["SignalScout","Detects buying signals — job posts, funding, tech changes — and feeds SMB sales teams warm lists.",8,8,6,8,9,7,7,["outbound","forecasting","smb"]],
+    ["SideDoor","Turns a layoff into a launched freelance practice: niche, portfolio, and the first three clients.",7,8,8,8,8,7,7,["hr","startups","outbound"]],
+    ["LaunchPR","Agent publicist: finds angles, pitches journalists, and tracks coverage for launches.",7,8,6,8,9,7,7,["startups","marketing","outbound"]],
+    ["BizBuyScout","Finds, values, and drafts LOIs for small-business acquisitions, search-fund style.",7,8,7,6,8,6,7,["startups","smb","matching","doc-automation"]],
+    ["ShopSeed","Launches and operates print-on-demand and digital-product storefronts end to end.",7,8,6,8,8,8,7,["creator","marketing","retail"]],
+    ["DealFlowDesk","Curates startup deal flow for angels with agent-written diligence memos.",7,8,6,7,8,6,7,["startups","fintech","matching","doc-automation"]],
+    ["ReturnToWork","Re-onboards parents and caregivers to the workforce: gap narrative, reskilling, applications.",6,7,8,7,8,7,6,["hr","education","matching"]],
+    ["VisaFounder","Helps immigrant founders pick the right visa and structure, then incorporates them.",7,7,8,7,7,7,6,["startups","legal","emergingmarkets"]],
+    ["PartnerUp","Co-founder matching with working-style diligence and an agent-run trial project.",6,7,7,6,7,7,6,["startups","matching"]],
+    ["InternPipeline","Gives SMBs vetted intern projects scoped and supervised by an AI mentor.",6,7,7,6,7,6,6,["hr","smb","matching","education"]],
+    ["CommunityFlip","Finds neglected niche newsletters and communities, then helps buyers revive and monetize them.",6,7,6,7,8,7,6,["creator","marketing"]]
+  ],
+  "Small Business Services": [
+    ["FrontDeskAI","AI receptionist/voice agent that books, reschedules, and upsells for service SMBs.",9,9,8,7,7,6,9,["smb","voice","scheduling"]],
+    ["BooksBot","Agentic bookkeeping: categorizes, reconciles, files, and flags cash issues.",9,9,8,7,6,7,8,["smb","fintech","doc-automation"]],
+    ["LeadDesk","Inbound lead capture + instant follow-up agent for home-service SMBs.",9,9,7,7,8,6,8,["smb","outbound"]],
+    ["ReviewEngine","Autonomously requests, manages, and replies to reviews plus local SEO.",9,8,7,8,8,7,7,["smb","marketing"]],
+    ["InvoiceChaser","AR automation: invoices, follows up, and collects for trades/contractors.",9,8,7,7,7,6,8,["smb","trades","payments"]],
+    ["MenuPilot","Dynamic pricing and online-ordering ops agent for restaurants.",8,8,7,6,7,5,7,["restaurant"]],
+    ["ShiftFill","Auto-fills shifts and manages scheduling/payroll comms for hourly teams.",8,8,7,6,7,6,7,["smb","scheduling","hr"]],
+    ["StockSense","Inventory and reorder agent for indie retail with demand forecasting.",8,8,7,6,7,6,7,["retail","forecasting"]],
+    ["QuoteGen","Instant quoting agent for contractors from photos and specs.",8,8,7,7,8,6,8,["trades","doc-automation"]],
+    ["VendorPay","AP automation: pays bills, catches duplicates and fraud.",8,8,7,6,6,6,7,["smb","payments"]],
+    ["SocialSMB","Runs a small business's social and content calendar end to end.",8,8,6,8,8,7,7,["smb","marketing"]],
+    ["ComplianceMate","Tracks licenses/permits/filings for SMBs and auto-renews them.",8,7,7,7,8,6,6,["smb","compliance","doc-automation"]],
+    ["ChurnGuard","Detects at-risk customers and runs win-back for subscription SMBs.",8,8,6,6,8,6,7,["smb","forecasting"]],
+    ["TableTurn","Reservation and no-show recovery agent for restaurants.",7,7,6,6,7,5,7,["restaurant","scheduling"]],
+    ["PermitPro","Automates local permit applications for builders and event SMBs.",7,7,6,6,7,5,6,["smb","compliance","doc-automation"]],
+    ["LoyaltyLoop","AI-run loyalty and SMS marketing for local shops.",7,7,6,7,8,6,6,["smb","marketing"]],
+    ["InboxAgent","Shared-inbox agent that drafts, answers, and routes SMB customer email end to end.",8,9,6,8,9,8,8,["smb","doc-automation"]],
+    ["WebsiteRevive","Audits and rebuilds outdated SMB websites — copy, SEO, booking — as a productized service.",8,8,6,9,9,8,7,["smb","marketing"]],
+    ["UtilityAudit","Audits SMB utility, telecom, and SaaS bills; paid a share of found savings.",9,8,6,8,8,7,8,["smb","payments","forecasting"]],
+    ["AdPilot SMB","Runs local Google/Meta ads autonomously with plain-English weekly profit reports.",8,8,6,8,8,7,8,["smb","marketing","forecasting"]],
+    ["PocketHR","Fractional-HR agent: policies, state-law compliance, and tricky-conversation guidance for small teams.",8,8,7,8,8,7,6,["smb","hr","compliance","doc-automation"]],
+    ["SOPSmith","Watches how the business actually runs and writes living SOPs and onboarding docs.",8,8,7,8,9,7,6,["smb","doc-automation","hr"]],
+    ["PhotoToListing","Turns product photos into optimized listings across Etsy, Amazon, Shopify, and Google.",7,8,6,9,9,8,7,["retail","marketing","doc-automation"]],
+    ["ChargebackDesk","Fights chargebacks for small e-commerce with agent-built evidence packets.",8,8,6,8,8,7,7,["retail","payments","doc-automation"]],
+    ["CallScoreCoach","Reviews SMB sales calls, coaches staff, and flags missed revenue.",7,8,6,8,8,7,7,["smb","voice"]],
+    ["CrewBrief","Daily AI dispatch for field crews: job packets, routes, and materials lists.",8,8,7,7,8,6,7,["trades","scheduling","smb"]],
+    ["COITracker","Collects and verifies certificates of insurance from subs and vendors automatically.",8,7,6,7,8,6,6,["smb","compliance","insurance","doc-automation"]],
+    ["CaterFlow","Catering intake, quoting, and prep-sheet agent for restaurants.",7,8,6,7,8,6,7,["restaurant","scheduling","doc-automation"]],
+    ["WasteWatch","Cuts restaurant food waste with invoice + POS yield analysis and prep targets.",7,8,7,6,7,6,7,["restaurant","forecasting"]],
+    ["EquipmentMD","Troubleshoots and schedules maintenance for shop and restaurant equipment from photos and manuals.",6,8,6,7,8,6,7,["restaurant","retail","trades"]],
+    ["RouteRunner","Route and fuel optimization agent for small delivery fleets.",7,8,6,6,7,6,7,["smb","scheduling","forecasting"]],
+    ["ListingSync","Keeps SMB hours and info synced across 40 directories and answers public Q&A.",7,7,5,8,9,7,5,["smb","marketing"]]
+  ],
+  "Money & Financial Access": [
+    ["LendBridge","Underwrites thin-file borrowers with alternative data for community lenders.",8,9,9,3,4,4,7,["fintech","lending","underwriting"]],
+    ["CreditClimb","Agentic credit-building coach and dispute filer for the underbanked.",8,8,9,7,7,8,8,["fintech","doc-automation"]],
+    ["RemitSmart","Lowest-cost remittance router with AI compliance and FX.",8,8,9,2,3,5,7,["fintech","payments","emergingmarkets"]],
+    ["CashFlow Copilot","Cash-flow forecasting and financing matchmaker for gig workers and SMBs.",9,8,8,7,7,7,7,["fintech","smb","forecasting"]],
+    ["TaxBack AI","Finds and files refunds/credits low-income filers miss (e.g. EITC).",8,8,9,6,6,8,8,["tax","doc-automation"]],
+    ["BenefitsFinder","Finds and enrolls people in unclaimed government benefits.",8,8,9,6,7,8,8,["benefits","matching"]],
+    ["DebtPlan AI","Negotiates and restructures consumer debt autonomously.",8,8,8,6,6,7,8,["fintech"]],
+    ["FXGuard","Hedging/payments agent for SMB importers in volatile-currency markets.",8,8,8,3,4,4,7,["fintech","payments","emergingmarkets"]],
+    ["SaveCircle","AI-run rotating savings and micro-savings for cash-based communities.",7,8,8,4,5,6,6,["fintech","emergingmarkets"]],
+    ["InvoiceFactor","Instant invoice factoring for freelancers via AI risk scoring.",8,8,7,3,4,6,7,["fintech","underwriting"]],
+    ["ClaimAssist","Insurance-claim filing and appeals agent for individuals.",8,8,7,7,7,8,8,["insurance","doc-automation"]],
+    ["MicroInsure","Parametric micro-insurance sold and serviced by AI for emerging markets.",7,8,8,2,3,5,6,["insurance","emergingmarkets"]],
+    ["PensionPath","Retirement/contribution coach for informal-economy workers.",7,7,8,5,6,6,6,["fintech","emergingmarkets"]],
+    ["RentReport","Reports rent payments to bureaus to build credit.",7,7,8,6,6,7,5,["fintech"]],
+    ["BudgetButler","Autonomous budgeting and bill-negotiation agent.",8,8,6,8,7,8,8,["fintech"]],
+    ["GrantCash","Matches individuals to hardship grants and auto-applies.",7,7,7,7,7,8,7,["benefits","matching"]],
+    ["GigTax","Quarterly-tax agent for gig workers: tracks income, estimates, and files on time.",8,8,8,8,8,8,7,["tax","fintech","doc-automation"]],
+    ["PropertyTax Protest","Auto-protests over-assessed property taxes; paid a share of the savings.",9,8,7,8,8,8,8,["tax","realestate","doc-automation"]],
+    ["StudentLoan Strategist","Optimizes repayment plans and enrolls borrowers in forgiveness programs.",8,8,8,8,8,8,7,["fintech","benefits","education","doc-automation"]],
+    ["SubSaver","Finds, cancels, and negotiates subscriptions and bills; paid from savings.",7,8,6,9,8,8,8,["fintech"]],
+    ["BankFeeBack","Detects junk bank and overdraft fees and recovers them for consumers.",7,8,7,8,8,8,8,["fintech","payments"]],
+    ["VABenefits Max","Builds and tracks veterans' disability claims and appeals, ethically priced.",7,8,9,7,7,7,7,["benefits","legal","doc-automation"]],
+    ["CrisisCash Compass","Same-day triage of a financial emergency into local aid programs plus auto-applications.",6,8,9,6,8,8,8,["benefits","matching"]],
+    ["WageCheck","Detects wage theft and unpaid overtime from pay stubs and files the claims.",6,8,9,6,7,7,7,["legal","benefits","doc-automation"]],
+    ["401kFinder","Finds lost 401(k)s and pensions and walks owners through consolidation.",7,7,8,7,7,8,7,["fintech","benefits","matching"]],
+    ["FirstHome Navigator","Homebuyer readiness agent: credit plan, down-payment-assistance matching, doc prep.",7,7,8,7,8,7,6,["fintech","realestate","benefits","matching"]],
+    ["InheritEase","Finds unclaimed property and inheritance, then runs the claims paperwork.",7,7,7,7,8,7,7,["fintech","legal","doc-automation","matching"]],
+    ["ProcedurePrice","Shops and negotiates the price of planned medical procedures before they happen.",6,8,8,7,8,7,8,["healthcare","insurance","matching"]],
+    ["RateScout","Continuously refinances debts to cheaper local credit-union offers.",7,8,8,7,7,7,7,["fintech","lending","matching"]],
+    ["ImmigrantCredit Passport","Translates foreign credit history into a US-lender-readable package.",6,7,9,5,6,6,6,["fintech","lending","emergingmarkets","underwriting"]],
+    ["DiasporaInvest","Helps diaspora workers invest and buy property back home, compliantly.",6,7,8,5,6,7,6,["fintech","emergingmarkets","realestate"]],
+    ["PaydayExit","Plans the exit from payday-loan spirals via credit-union consolidation and cashflow coaching.",6,7,9,5,6,7,7,["fintech","lending"]]
+  ],
+  "Professional Services Access": [
+    ["LegalAid AI","Agentic paralegal: forms, filings, and plain-English guidance for common legal needs.",9,9,9,7,6,8,8,["legal","doc-automation","compliance"]],
+    ["ImmigrationPath","Guides and prepares visa/immigration filings end to end.",9,8,9,6,5,8,7,["legal","doc-automation"]],
+    ["TaxPro Access","On-demand AI tax advisor and filing for complex personal taxes.",9,8,8,7,6,8,7,["tax","doc-automation"]],
+    ["DocConsult","AI triage, specialist-matching, and paperwork for patients.",8,8,9,5,6,6,7,["healthcare","matching"]],
+    ["BenefitsAppeal","Appeals denied disability/SSDI claims with an AI-built case.",8,8,9,6,6,7,7,["benefits","legal","doc-automation"]],
+    ["DisputeDesk","Fights wrongful bills and denials (medical, insurance) for consumers.",8,8,8,7,7,8,8,["insurance"]],
+    ["TherapyBridge","Matches and intakes clients to therapists; handles insurance and scheduling.",8,8,8,5,6,6,6,["healthcare","matching","scheduling"]],
+    ["ContractGuard","Reviews and explains contracts for freelancers and SMBs before they sign.",8,9,7,8,8,8,7,["legal","doc-automation"]],
+    ["EstatePlan AI","Wills and estate documents plus guidance for everyday families.",8,8,8,7,7,7,7,["legal","doc-automation"]],
+    ["VetConnect","AI vet triage and telehealth routing for pet owners.",8,8,7,6,7,7,7,["healthcare"]],
+    ["CareNavigator","Elder-care planning and provider coordination agent.",7,8,8,6,7,7,6,["healthcare","matching"]],
+    ["AccountantOnDemand","Bookkeeping plus advisory for micro-businesses.",8,8,7,7,7,6,7,["fintech","smb"]],
+    ["RxAdvisor","Medication-interaction and cost-savings advisor.",7,8,8,6,7,7,7,["healthcare"]],
+    ["GrievanceBot","Employment-rights guidance and claim filing for workers.",7,7,8,6,7,7,6,["legal"]],
+    ["RealtyGuide","Buyer/seller advisor automating disclosures, inspections, negotiations.",7,7,6,5,6,6,6,["realestate","matching"]],
+    ["NotaryNow","Remote online notarization and document-prep agent.",7,7,6,5,6,6,6,["legal","doc-automation"]],
+    ["TenantRights AI","Deposits, repairs, and eviction-defense letters plus small-claims prep for renters.",7,8,9,7,8,9,8,["legal","realestate","doc-automation"]],
+    ["SmallClaims Coach","End-to-end small claims: demand letter, filing, evidence, and hearing script.",7,8,8,8,8,8,8,["legal","doc-automation"]],
+    ["IRSLetter Helper","Decodes IRS letters and drafts the response, payment plan, or abatement request.",8,8,8,8,8,8,7,["tax","legal","doc-automation"]],
+    ["PriorAuth Ally","Builds prior-authorization packets and appeals for patients and small clinics.",8,8,9,7,7,6,7,["healthcare","insurance","doc-automation","compliance"]],
+    ["TrademarkTeam","Trademark search, filing, and office-action responses for small brands.",8,8,7,8,8,8,7,["legal","doc-automation","smb","startups"]],
+    ["MedRecords Translator","Explains medical records and labs in plain language and preps appointment questions.",6,8,8,8,9,8,8,["healthcare","doc-automation"]],
+    ["AccidentClaim Copilot","Turns minor-accident photos into a complete demand package against the insurer.",7,8,8,7,7,8,8,["legal","insurance","doc-automation"]],
+    ["TicketFighter","Contests parking and traffic tickets automatically.",7,8,6,9,8,9,8,["legal"]],
+    ["TranslateCertify","Certified document translation with notarization workflow for immigration and courts.",7,8,8,8,8,7,7,["legal","doc-automation","emergingmarkets"]],
+    ["HomeInspection Decoder","Turns inspection reports into a negotiation strategy with repair quotes.",7,8,6,8,9,8,7,["realestate","doc-automation"]],
+    ["NonprofitCounsel","Formation, 501(c)(3) filings, and board-governance agent for small nonprofits.",7,7,7,7,8,7,6,["legal","nonprofit","doc-automation","compliance"]],
+    ["RecordsRequest","Drafts, files, and chases public-records (FOIA) requests for citizens and journalists.",6,8,7,7,9,7,7,["legal","doc-automation"]],
+    ["LifeAdmin Law","Bundles routine legal life-admin: name changes, powers of attorney, affidavits.",6,7,7,8,8,7,6,["legal","doc-automation"]],
+    ["WorkInjury Navigator","Workers-comp claim guidance and paperwork for injured workers.",6,7,8,6,7,7,6,["legal","benefits","doc-automation","trades"]],
+    ["SpeechPath Access","Between-session speech-therapy practice for kids with SLP oversight.",6,8,8,6,7,7,8,["healthcare","education","voice"]],
+    ["BankruptcyBridge","Chapter 7 preparation and paperwork with attorney review, at a fraction of the cost.",5,8,9,4,6,7,7,["legal","fintech","doc-automation","nonprofit"]]
+  ]
+};
+
+const CAT_COLORS = ["Education & Human Potential","Entrepreneurship & Job Creation","Small Business Services","Money & Financial Access","Professional Services Access"];
+const SEED_ORDER_16 = [1,16,8,9,5,12,4,13,3,14,6,11,7,10,2,15];
+const DOMAIN_TAGS = ["education","healthcare","legal","tax","fintech","lending","insurance","benefits","smb","restaurant","retail","trades","hr","realestate","creator","nonprofit","emergingmarkets","startups"];
+const CAP_TAGS = ["voice","doc-automation","outbound","forecasting","scheduling","compliance","matching","underwriting","marketing","payments"];
+const DRAW_SIZE = 16;
+const SIM_RUNS = 1000;
+
+let pool = {};        // cat -> all idea objects (the full 32)
+let byId = {};
+let draws = {};       // cat -> array of 16 idea ids (current draw)
+let drawNum = 0;
+let drawHistory = []; // [{n, ids:{cat:[ids]}}] — champions recomputed under current weights
+let weights = {bv:1, ai:1, ci:1, fit:1.5, ttfd:0, solo:0, wedge:0, show:0};
+let edges = new Set(["doc-automation","matching","education","startups"]); // auto-detected from github.com/sgharlow
+let activeTab = 0;
+let editingRef = null;
+let simResults = null; // {n, jitter, catWins, ideaChamp, ideaOverall, stale}
+
+function initPool(){
+  pool = {}; byId = {};
+  for(const cat in SEED_DATA){
+    pool[cat] = SEED_DATA[cat].map((r,i)=>({id:cat+"#"+i, cat, name:r[0], pitch:r[1], bv:r[2], ai:r[3], ci:r[4], ttfd:r[5], solo:r[6], wedge:r[7], show:r[8], tags:r[9].slice()}));
+    pool[cat].forEach(it=> byId[it.id]=it);
+  }
+}
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function sampleIds(cat){ return shuffle(pool[cat].map(x=>x.id)).slice(0,DRAW_SIZE); }
+function newDraw(){
+  drawNum++;
+  draws = {};
+  for(const cat of CAT_COLORS) draws[cat] = sampleIds(cat);
+  drawHistory.push({n:drawNum, ids:JSON.parse(JSON.stringify(draws))});
+  render(); pulse();
+}
+function drawIdeas(cat){ return draws[cat].map(id=>byId[id]); }
+
+function fitCount(it){ return it.tags.reduce((n,t)=> n + (edges.has(t)?1:0), 0); }
+function fitBonus(it){ return fitCount(it) * weights.fit; }
+function baseTotal(it){ return it.bv*weights.bv + it.ai*weights.ai + it.ci*weights.ci; }
+function lensTotal(it){ return it.ttfd*weights.ttfd + it.solo*weights.solo + it.wedge*weights.wedge + it.show*weights.show; }
+function total(it){ return +(baseTotal(it) + lensTotal(it) + fitBonus(it)).toFixed(2); }
+
+function cmp(a,b){ // negative = a is stronger; official tie-break BV -> AI -> CI, then name
+  const ta=total(a), tb=total(b);
+  if(tb!==ta) return tb-ta;
+  if(b.bv!==a.bv) return b.bv-a.bv;
+  if(b.ai!==a.ai) return b.ai-a.ai;
+  if(b.ci!==a.ci) return b.ci-a.ci;
+  return a.name.localeCompare(b.name);
+}
+function better(a,b){ return cmp(a,b)<=0 ? a : b; }
+function champOf(list){ return list.reduce((a,b)=> better(a,b)); }
+
+function seededList(cat){
+  const arr = drawIdeas(cat).slice();
+  arr.sort(cmp);
+  arr.forEach((it,i)=> it.seed=i+1);
+  return arr;
+}
+
+function miniScores(it){
+  return `<span class="mini">
+    <span class="dot" style="color:var(--bv)">${it.bv}</span>
+    <span class="dot" style="color:var(--ai)">${it.ai}</span>
+    <span class="dot" style="color:var(--ci)">${it.ci}</span></span>`;
+}
+function seedCard(it, cls=""){
+  if(!it) return `<div class="seed bye"><span class="sd">–</span><span class="nm">TBD</span></div>`;
+  const fb = fitBonus(it);
+  const fitCls = fitCount(it)>0 ? " fitmatch" : "";
+  const fitTag = fb>0 ? `<small>+${fb.toFixed(1)} fit</small>` : "";
+  return `<div class="seed ${cls}${fitCls}" data-id="${it.id}">
+      <span class="sd">${it.seed||""}</span>
+      <span class="nm">${it.name}<small>${it.pitch}</small></span>
+      ${miniScores(it)}
+      <span class="tot">${total(it)}${fitTag}</span>
+    </div>`;
+}
+
+function runBracket(cat){
+  const seeds = seededList(cat);
+  const byPos = SEED_ORDER_16.map(s=> seeds[s-1]);
+  let cur = byPos;
+  const rounds=[];
+  while(cur.length>1){
+    const next=[], matches=[];
+    for(let i=0;i<cur.length;i+=2){
+      const w = better(cur[i],cur[i+1]);
+      matches.push([cur[i],cur[i+1],w]);
+      next.push(w);
+    }
+    rounds.push(matches);
+    cur=next;
+  }
+  return {seeds, rounds, champion:cur[0]};
+}
+
+function renderCategory(cat){
+  const {rounds, champion} = runBracket(cat);
+  const benched = pool[cat].filter(it=> !draws[cat].includes(it.id));
+  const titles=["Round of 16","Quarterfinals","Semifinals","Final"];
+  let html = `<p class="bench"><b>Sitting out draw #${drawNum}</b> (${benched.length} of ${pool[cat].length}): ${benched.map(b=>b.name).join(" · ")} — hit <b>🎲 New draw</b> to rotate them in.</p>`;
+  html += `<div class="bracket">`;
+  rounds.forEach((matches,ri)=>{
+    html += `<div class="round"><h4>${titles[ri]||"Round "+(ri+1)}</h4>`;
+    matches.forEach(m=>{
+      const [a,b,w]=m;
+      html += `<div class="match">${seedCard(a, w===a?"win":"")}${seedCard(b, w===b?"win":"")}</div>`;
+    });
+    html += `</div>`;
+  });
+  html += `<div class="champbox"><div class="crown">★ Bracket Champion ★</div>
+      <div class="champ-card">
+        <div class="nm">${champion.name}</div>
+        <div class="pitch">${champion.pitch}</div>
+        <div class="tot">${total(champion)}<span style="font-size:13px;color:var(--muted)"> pts</span></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:6px">BV ${champion.bv} · AI ${champion.ai} · Impact ${champion.ci} · Seed #${champion.seed}${fitBonus(champion)>0?` · +${fitBonus(champion).toFixed(1)} fit`:""}</div>
+      </div></div>`;
+  html += `</div>`;
+  return html;
+}
+
+/* ---------- Monte Carlo simulator ---------- */
+function jitterClone(it){
+  const j = v => Math.max(1, Math.min(10, v + Math.floor(Math.random()*3) - 1));
+  return {...it, bv:j(it.bv), ai:j(it.ai), ci:j(it.ci)};
+}
+function simulate(n){
+  const catWins={}, ideaChamp={}, ideaOverall={};
+  const useJitter = document.getElementById('simJitter').checked;
+  for(let s=0;s<n;s++){
+    let best=null, bestCat=null;
+    for(const cat of CAT_COLORS){
+      const ids = sampleIds(cat);
+      let champ=null;
+      for(const id of ids){
+        const cand = useJitter ? jitterClone(byId[id]) : byId[id];
+        champ = champ===null ? cand : better(champ,cand);
+      }
+      ideaChamp[champ.id] = (ideaChamp[champ.id]||0)+1;
+      if(best===null || cmp(champ,best)<0){ best=champ; bestCat=cat; }
+    }
+    catWins[bestCat] = (catWins[bestCat]||0)+1;
+    ideaOverall[best.id] = (ideaOverall[best.id]||0)+1;
+  }
+  simResults = {n, jitter:useJitter, catWins, ideaChamp, ideaOverall, stale:false};
+  activeTab = 5;
+  render(); pulse();
+}
+function invalidateSim(){ if(simResults) simResults.stale = true; }
+
+function renderVerdict(){
+  let html = `<div class="vpanel"><h3>🎯 Focus-area verdict</h3>`;
+  if(!simResults){
+    html += `<p class="vnote">Press <b>▶ Simulate ${SIM_RUNS.toLocaleString()} draws</b> (top right) to play ${SIM_RUNS.toLocaleString()} random 16-of-32 tournaments under your current weights and edges. The category that wins the most overall titles is your focus area — it means the category is <b>deep</b> (keeps producing winners no matter which ideas get drawn), not just carried by one lucky idea.</p></div>`;
+    return html;
+  }
+  const {n, jitter, catWins, ideaChamp, ideaOverall, stale} = simResults;
+  if(stale) html += `<p class="vstale">⚠ Weights, edges, or scores changed since this run — hit ▶ Simulate again for current numbers.</p>`;
+  const rows = CAT_COLORS.map(cat=>{
+    const wins = catWins[cat]||0;
+    const top = pool[cat].map(it=>({it, w:ideaChamp[it.id]||0})).filter(x=>x.w>0).sort((a,b)=>b.w-a.w).slice(0,3);
+    return {cat, wins, top};
+  }).sort((a,b)=> b.wins-a.wins);
+  const best = rows[0];
+  const bestIdeaEntry = Object.entries(ideaOverall).sort((a,b)=>b[1]-a[1])[0];
+  const bestIdea = byId[bestIdeaEntry[0]];
+  const pct = x => (100*x/n).toFixed(1)+"%";
+  html += `<div class="vbig">Recommended focus area: <b>${best.cat}</b> — won <b>${pct(best.wins)}</b> of ${n.toLocaleString()} simulated tournaments${jitter?" (with ±1 scoring jitter)":""}.<br>
+    Most robust single idea: <b>${bestIdea.name}</b> (${bestIdea.cat}) — overall champion in <b>${pct(bestIdeaEntry[1])}</b> of runs.</div>`;
+  html += `<table class="lead"><thead><tr><th>Category</th><th>Overall titles</th><th>Most frequent category champions</th></tr></thead><tbody>`;
+  rows.forEach(r=>{
+    html += `<tr><td><b>${r.cat}</b></td><td class="scorecell">${pct(r.wins)}</td>
+      <td class="cat">${r.top.map(t=>`${t.it.name} ${(100*t.w/n).toFixed(0)}%`).join(" · ")||"–"}</td></tr>`;
+  });
+  html += `</tbody></table>`;
+  html += `<p class="vnote">How to read this: each simulated draw fields a random 16 of the 32 ideas per category, so any single idea appears in only ~50% of draws — an idea winning ~50% is winning essentially every draw it appears in. The <b>category</b> percentage is the real focus-area signal: it measures pool <b>depth</b> — how often the category's drawn champion beats the other four — which is what you want in a focus area you may pivot within.</p></div>`;
+  return html;
+}
+
+function renderDrawLog(){
+  if(drawHistory.length<2) return "";
+  const tally = {};
+  let items = "";
+  drawHistory.forEach(h=>{
+    let best=null, bestCat=null;
+    CAT_COLORS.forEach(cat=>{
+      const c = champOf(h.ids[cat].map(id=>byId[id]));
+      if(best===null || cmp(c,best)<0){ best=c; bestCat=cat; }
+    });
+    tally[bestCat] = (tally[bestCat]||0)+1;
+    items += `<li>#${h.n} — <b>${best.name}</b> (${bestCat})</li>`;
+  });
+  const tallyStr = Object.entries(tally).sort((a,b)=>b[1]-a[1]).map(([c,k])=>`${c}: ${k}`).join(" · ");
+  return `<div class="drawlog"><h3>Your draws this session</h3>
+    <p style="font-size:12px;color:var(--muted);margin:0 0 6px">Overall champion of each draw, recomputed under your <i>current</i> weights and edges. Tally: ${tallyStr}</p>
+    <ul style="margin:0;padding-left:18px">${items}</ul></div>`;
+}
+
+function renderOverview(){
+  let html = renderVerdict();
+  const champs = CAT_COLORS.map(cat=>{ const {champion}=runBracket(cat); return {cat, c:champion}; });
+  champs.sort((x,y)=> cmp(x.c,y.c));
+  html += `<p style="color:var(--muted);font-size:13px;margin:0 0 12px">The five bracket champions of <b>draw #${drawNum}</b> seeded against each other. The overall #1 is the single idea best positioned to win not just its category prize but the grand prize.</p>`;
+  html += `<table class="lead"><thead><tr><th>#</th><th>Idea</th><th>Category</th><th>BV</th><th>AI</th><th>Impact</th><th>Fit</th><th>Total</th></tr></thead><tbody>`;
+  champs.forEach((row,i)=>{
+    const c=row.c;
+    html += `<tr><td class="rk">${i+1}</td>
+      <td><b>${c.name}</b><br><span class="cat">${c.pitch}</span></td>
+      <td class="cat">${row.cat}</td>
+      <td>${c.bv}</td><td>${c.ai}</td><td>${c.ci}</td>
+      <td style="color:var(--fit)">${fitBonus(c)>0?"+"+fitBonus(c).toFixed(1):"–"}</td>
+      <td class="scorecell">${total(c)}</td></tr>`;
+  });
+  html += `</tbody></table>`;
+  html += `<p style="color:var(--muted);font-size:12px;margin-top:14px">Strategy note: the grand-prize race rewards <b>fast real revenue</b> + <b>AI genuinely running operations</b>. Turn on the edges you actually have and the strategy lenses you care about — the focus area worth committing to is the one that keeps winning across draws and simulations, not just this one.</p>`;
+  html += renderDrawLog();
+  return html;
+}
+
+function pulse(){ const p=document.getElementById('pulse'); p.classList.add('show'); clearTimeout(window._pt); window._pt=setTimeout(()=>p.classList.remove('show'),550); }
+
+function render(){
+  const tabsEl = document.getElementById('tabs');
+  tabsEl.innerHTML = CAT_COLORS.map((c,i)=>`<div class="tab ${activeTab===i?'active':''}" data-tab="${i}">${c}</div>`).join('')
+    + `<div class="tab overview ${activeTab===5?'active':''}" data-tab="5">🏅 Overall Leaderboard</div>`;
+  tabsEl.querySelectorAll('.tab').forEach(t=> t.onclick=()=>{ activeTab=+t.dataset.tab; render(); });
+
+  const view = document.getElementById('view');
+  view.innerHTML = (activeTab===5) ? renderOverview() : renderCategory(CAT_COLORS[activeTab]);
+  view.querySelectorAll('.seed[data-id]').forEach(el=> el.onclick=()=> openEdit(el.dataset.id));
+  document.getElementById('edgeCount').textContent = edges.size + " selected";
+  document.getElementById('drawInfo').textContent = `draw #${drawNum} · ${DRAW_SIZE} of ${pool[CAT_COLORS[0]].length}/cat`;
+}
+
+/* ---------- edge chips ---------- */
+function renderChips(){
+  const d=document.getElementById('domainChips'), c=document.getElementById('capChips');
+  const mk=t=>`<span class="chip ${edges.has(t)?'on':''}" data-tag="${t}">${t}</span>`;
+  d.innerHTML = DOMAIN_TAGS.map(mk).join('');
+  c.innerHTML = CAP_TAGS.map(mk).join('');
+  document.querySelectorAll('.chip').forEach(ch=>{
+    ch.onclick=()=>{ const t=ch.dataset.tag; edges.has(t)?edges.delete(t):edges.add(t); invalidateSim(); renderChips(); render(); pulse(); };
+  });
+}
+
+/* ---------- editing ---------- */
+const MFIELDS = [["BV","bv"],["AI","ai"],["CI","ci"],["TT","ttfd"],["SO","solo"],["WE","wedge"],["SH","show"]];
+function openEdit(id){
+  const it=byId[id]; if(!it) return;
+  editingRef=it;
+  document.getElementById('mTitle').textContent="Edit: "+it.name;
+  document.getElementById('mName').value=it.name;
+  document.getElementById('mPitch').value=it.pitch;
+  MFIELDS.forEach(([k,key])=>{ document.getElementById('m'+k).value=it[key]; document.getElementById('m'+k+'v').textContent="("+it[key]+")"; });
+  document.getElementById('mTags').textContent=it.tags.join(", ")||"none";
+  document.getElementById('overlay').classList.add('show');
+}
+function closeEdit(){ document.getElementById('overlay').classList.remove('show'); editingRef=null; }
+MFIELDS.forEach(([k])=>{ document.getElementById('m'+k).addEventListener('input',e=>{ document.getElementById('m'+k+'v').textContent="("+e.target.value+")"; }); });
+document.getElementById('mCancel').onclick=closeEdit;
+document.getElementById('mSave').onclick=()=>{
+  if(editingRef){
+    editingRef.name=document.getElementById('mName').value||editingRef.name;
+    editingRef.pitch=document.getElementById('mPitch').value;
+    MFIELDS.forEach(([k,key])=>{ editingRef[key]=+document.getElementById('m'+k).value; });
+    invalidateSim();
+  }
+  closeEdit(); render(); pulse();
+};
+document.getElementById('overlay').onclick=e=>{ if(e.target.id==='overlay') closeEdit(); };
+
+/* ---------- weights ---------- */
+const WSLIDERS = [["wBV","bv","vBV"],["wAI","ai","vAI"],["wCI","ci","vCI"],["wFIT","fit","vFIT"],["wTT","ttfd","vTT"],["wSO","solo","vSO"],["wWE","wedge","vWE"],["wSH","show","vSH"]];
+WSLIDERS.forEach(([id,key,label])=>{
+  const el=document.getElementById(id);
+  el.addEventListener('input',()=>{ weights[key]=+el.value; document.getElementById(label).textContent=(+el.value).toFixed(1); invalidateSim(); render(); pulse(); });
+});
+document.getElementById('resetW').onclick=()=>{
+  weights={bv:1,ai:1,ci:1,fit:1.5,ttfd:0,solo:0,wedge:0,show:0};
+  WSLIDERS.forEach(([id,key,label])=>{ document.getElementById(id).value=weights[key]; document.getElementById(label).textContent=weights[key].toFixed(1); });
+  invalidateSim(); render(); pulse();
+};
+document.getElementById('resetAll').onclick=()=>{ initPool(); invalidateSim(); render(); pulse(); };
+
+document.getElementById('drawBtn').onclick=()=> newDraw();
+document.getElementById('simBtn').onclick=()=> simulate(SIM_RUNS);
+
+document.getElementById('ghInput').addEventListener('change',()=>{});
+document.getElementById('liInput').addEventListener('change',()=>{});
+
+initPool();
+renderChips();
+newDraw();
+</script>
+</body>
+</html>
