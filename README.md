@@ -36,6 +36,7 @@ Or publish it free on **GitHub Pages**: repo Settings → Pages → deploy from 
 | File | Purpose |
 |---|---|
 | `index.html` | The complete tool (UI + scoring engine + 160-idea pool + simulator). |
+| `FINALISTS.md` | Historical record of each round's winning ideas (kept out of the active pool). |
 | `SPEC.md` | Product / technical specification (v0.2). |
 | `LICENSE` | MIT. |
 
