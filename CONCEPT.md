@@ -36,7 +36,7 @@ Launch for **customer-support and call-center professionals displaced by AI supp
 
 ## The business itself runs on agents
 
-The rules judge whether teams "run their business through AI… live in production and executes key decisions" — the *business*, not just the product. Rebound's own operations are agent-run and logged from day one:
+The rules judge whether teams "run their business through AI… live in production and executes key decisions" — the *business*, not just the product. Comeback's own operations are agent-run and logged from day one:
 
 - **Support agent** answers users (voice and chat) with escalation to Steve.
 - **Onboarding agent** runs activation sequences and win-back.
@@ -53,14 +53,14 @@ The rules judge whether teams "run their business through AI… live in producti
 ## Revenue plan (judged on arms-length, third-party revenue with monthly breakdown)
 
 - **Design for a growth curve, not a spike**: rules require revenue broken down by month (May–Aug). Subscriptions beat one-off packs for the sustainability assessment — lead with a **founding-member subscription** ($39–59/mo) plus the **Pivot Map as a $49–79 one-time entry purchase**.
-- **Flat pricing only — no success fees.** Fee-for-placement structures can trigger state employment-agency licensing; Rebound is software + coaching, never a placement agency.
+- **Flat pricing only — no success fees.** Fee-for-placement structures can trigger state employment-agency licensing; Comeback is software + coaching, never a placement agency.
 - **Arms-length discipline**: related-party revenue must be disclosed separately and judges discount it — no friends-and-family padding; every customer through the public funnel.
 - **Outplacement B2B**: a real opportunity (incumbents charge $1,500–3,000/head and are weakest at direction + networking) but enterprise cycles won't close by Aug 17. Goal: **one signed pilot or LOI** as trajectory evidence; consumer revenue carries the submission.
 - **Scholarship seats** funded from margin for unemployment-only users — pricing empathy that doubles as Category Impact evidence.
 
 ## Compliance & trust by design
 
-- Candidate-side only: rubric scores are private coaching feedback, never shared with employers — keeps Rebound clearly outside employer-side automated-employment-decision rules (e.g., NYC LL144) and away from hiring-bias liability.
+- Candidate-side only: rubric scores are private coaching feedback, never shared with employers — keeps Comeback clearly outside employer-side automated-employment-decision rules (e.g., NYC LL144) and away from hiring-bias liability.
 - Consent-first data: user-uploaded exports only; no scraping; voice recordings deletable, never used for training; clear retention policy.
 - Severance/benefits guidance is informational with attorney/advisor referral points.
 - Accent and dialect fairness: scoring rubrics target content and structure, with delivery feedback framed as coaching choices, not penalties.
@@ -83,10 +83,10 @@ The rules judge whether teams "run their business through AI… live in producti
 
 ## Category decision
 
-The official category copy reads: *Education & Human Potential — "Transforming how we learn, grow, and achieve our best"* vs. *Entrepreneurship & Job Creation — "Fueling the tools that help new founders and economies thrive."* Rebound is a person-development product (coaching, practice, growth into a new role), which maps cleanly to **Education & Human Potential**; the E&JC copy centers *founders*. Stage One is pass/fail on category fit, so the cleaner read wins despite Education likely being the more crowded category. If the contract/fractional bridge-income lane becomes prominent, E&JC becomes defensible — revisit at submission time.
+The official category copy reads: *Education & Human Potential — "Transforming how we learn, grow, and achieve our best"* vs. *Entrepreneurship & Job Creation — "Fueling the tools that help new founders and economies thrive."* Comeback is a person-development product (coaching, practice, growth into a new role), which maps cleanly to **Education & Human Potential**; the E&JC copy centers *founders*. Stage One is pass/fail on category fit, so the cleaner read wins despite Education likely being the more crowded category. If the contract/fractional bridge-income lane becomes prominent, E&JC becomes defensible — revisit at submission time.
 
 ## Open items
 
-- Name/trademark/domain check ("Rebound" is a working title; conflicts likely).
+- Name/trademark/domain check ("Comeback" is a working title; conflicts likely).
 - Gemini Live voice latency test is the week-1 go/no-go gate.
 - Pick the first three community partnerships for the support-pro wedge.
