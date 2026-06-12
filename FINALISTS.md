@@ -36,4 +36,26 @@ Both winners serve the **same customer at the same moment** (an active job seeke
 
 ---
 
-*Round 2 uses pool v2 (160 all-new ideas). Add its winners here when the run is done.*
+## Round 2 — pool v2 (recorded 2026-06-11)
+
+Winner from the second 160-idea pool (preserved in git at commit `11588cc`).
+
+### AccentSmith — Education & Human Potential
+
+> Speech-clarity and accent coaching for customer-facing and call-center professionals.
+
+| BV | AI | CI | First dollar | Solo-build | Wedge | Showcase |
+|---|---|---|---|---|---|---|
+| 8 | 9 | 8 | 8 | 8 | 7 | 9 |
+
+Tags: `education`, `voice`, `emergingmarkets`, `hr`
+
+Why it won: same winning anatomy as round 1 — a voice-native agent with instant individual willingness-to-pay (career advancement), solo-buildable on current speech APIs, and a live demo judges can *hear*. Strong Category Impact via the emerging-markets/call-center angle: clearer speech directly converts to income.
+
+### Pattern across rounds 1–2
+
+All three winners are **voice/agent career tools for individual professionals**: JobHuntOS (get the job), InterviewGym (win the interview), AccentSmith (perform in the role). Shared traits: `hr`/`education` domains, consumer-paid, high showcase scores (8–9), solo-buildable (8–9), fast first dollar (8–9). The focus-area signal is converging on a single thesis: **an AI career-advancement agent for working professionals** — plausibly one product line spanning Education & Human Potential or Entrepreneurship & Job Creation.
+
+---
+
+*Round 3 uses pool v3 (160 all-new ideas; includes a career-adjacent cluster in other categories to test whether the career thesis holds outside Education/Entrepreneurship). Add its winners here when the run is done.*
