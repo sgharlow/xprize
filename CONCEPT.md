@@ -1,4 +1,6 @@
-# Concept v2: the combined entry (working title: "Rebound")
+# Concept v2: the combined entry — **NextRound**
+
+> **Decisions locked 2026-06-11** (Steve): name **NextRound** (was "Rebound"; domain/trademark check pending), category **Education & Human Potential**, wedge **support professionals displaced by AI**. Build repo: `../nextround`. Week-1 go/no-go **passed**: Gemini Live (`gemini-3.1-flash-live-preview`) median time-to-first-audio 727ms — full-duplex voice UX viable.
 
 *Revised 2026-06-11 after a needs-first review and a live read of the official rules and FAQ (xprize.devpost.com). Supersedes v1 (git `6be02e5`).*
 
